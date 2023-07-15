@@ -5,8 +5,9 @@ while True:
     choice = ["paper", "rock", "scissors"]
 
     computer = random.choice(choice)
-    player = "paper"
+    player = None
 
+    print("Hy lets play a game")
     while player not in choice:
         player = input("Pleace choice paper rock or scissors: ").lower()
 
@@ -46,7 +47,7 @@ while True:
             print("computer win")
 
     play_again = input("Do you whant to play again (yes/no)").lower()
-    if play_again == 'no':
+    if play_again != 'yes':
         break
 
-print("Tahnks for play to the next time")
+print("Tahnks for game to the next time ;)")
