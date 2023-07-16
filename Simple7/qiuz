@@ -12,8 +12,8 @@ def new_game():
         
         for i in options[question_num-1]:
             print(i)
+
         guess = None
-        
         while guess not in possible_ansvers:
             guess = input("Enter ansver (A,B,C or D): ").upper()
         gesseses.append(guess)
