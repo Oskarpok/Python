@@ -1,0 +1,19 @@
+from time import *
+from tkinter import *
+
+def update():
+    time_label.config(text=strftime('%H:%M:%S %p'))
+    day_label.config(text=strftime('%H %A %B %Y'))
+    whindow.after(1000, update)
+
+whindow = Tk()
+
+time_label = Label(whindow, font=('Ariel', 50), bg='black', fg='#00FF00')
+time_label.pack()
+
+day_label = Label(whindow, font=('Ink Free', 25))
+day_label.pack()
+
+update()
+
+whindow.mainloop()
