@@ -12,7 +12,6 @@ def equal():
         global label_content
         result = str(eval(label_content))
         label_text.set(result)
-        label_text.set(result)
         label_content = result
         
     # Exeption with syntaks and divided by 0
