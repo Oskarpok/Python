@@ -11,6 +11,10 @@ def change_color():
 def change_font(*args):
     text_area.config(font=(font_name.get(), size_box.get()))
 
+def update_font_size(event):
+    font_size.set(size_box.get())
+    change_font()
+
 def new_file():
     window.title('New unnamed whindow')
     text_area.delete(1.0, END)
@@ -63,6 +67,12 @@ def paste():
 def about():
     showinfo("About this program", "This is a some editor text witch couple standards option ")
 
+def change_cursor_enter(event):
+    scroll_bar.config(cursor="hand2")
+
+def change_cursor_leave(event):
+    scroll_bar.config(cursor="")
+
 
 window = Tk()
 window.title('Text editor')
@@ -83,7 +93,7 @@ font_name.set('Arial')
 font_size = StringVar(window)
 font_size.set('25')
 
-text_area = Text(window, font=(font_name.get(), font_size.get()))
+text_area = Text(window, font=(font_name.get(), font_size.get()), )
 
 scroll_bar = Scrollbar(text_area)
 
@@ -93,6 +103,7 @@ window.grid_columnconfigure(0, weight=1)
 text_area.grid(sticky=N + E + W + S)
 scroll_bar.pack(side=RIGHT, fill=Y)
 text_area.config(yscrollcommand=scroll_bar.set)
+scroll_bar.config(command=text_area.yview,)
 
 frame = Frame(window)
 frame.grid()
@@ -105,6 +116,11 @@ font_box.grid(row=0, column=1)
 
 size_box = Spinbox(frame, from_=1, to=100, textvariable=font_size, command=change_font)
 size_box.grid(row=0, column=2)
+
+size_box.bind("<FocusOut>", update_font_size)
+size_box.bind("<Return>", update_font_size)
+scroll_bar.bind("<Enter>", change_cursor_enter)
+scroll_bar.bind("<Leave>", change_cursor_leave)
 
 menu_bar = Menu(window)
 window.config(menu=menu_bar)
