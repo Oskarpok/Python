@@ -103,7 +103,7 @@ window.grid_columnconfigure(0, weight=1)
 text_area.grid(sticky=N + E + W + S)
 scroll_bar.pack(side=RIGHT, fill=Y)
 text_area.config(yscrollcommand=scroll_bar.set)
-scroll_bar.config(command=text_area.yview,)
+scroll_bar.config(command=text_area.yview)
 
 frame = Frame(window)
 frame.grid()
