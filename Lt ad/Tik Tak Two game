@@ -1,0 +1,146 @@
+from tkinter import *
+import random
+
+def next_turn(row, column):
+
+    global player, X, O
+    # that if work like disabale for button becous if we give some button some text it can't
+    # be changed if the game is continue only restart button or restart progrm can change that
+    # and tanks to add cheack_winner() is False when game is win can't click any button
+    # ['text'] give acces to text argument
+    if buttons[row][column]['text'] == '' and cheack_winner() is False:
+        if player == players[0]:
+            buttons[row][column]['text'] = player
+            if cheack_winner() is False:
+                player = players[1]
+                label.config(text=players[1]+' turn')
+
+            elif cheack_winner() is True:
+                X += 1
+                label.config(text='Player '+players[0]+' win')
+
+            elif cheack_winner() == 'Tie':
+                label.config(text='Tie')
+
+        else:
+            buttons[row][column]['text'] = player
+            if cheack_winner() is False:
+                player = players[0]
+                label.config(text=players[0]+' turn')
+
+            elif cheack_winner() is True:
+                label.config(text='Player ' + players[1] + ' win')
+                O += 1
+
+            elif cheack_winner() == 'Tie':
+                label.config(text='Tie')
+
+    update_scores()
+
+def cheack_winner():
+    #check all available win condition and elif return 'Tie' other return False and change
+    # wining space to selected color
+    for row in range(3):
+        if buttons[row][0]['text'] == buttons[row][1]['text'] == buttons[row][2]['text'] !='':
+            buttons[row][0].config(bg='green')
+            buttons[row][1].config(bg='green')
+            buttons[row][2].config(bg='green')
+            return True
+
+    for column in range(3):
+        if buttons[0][column]['text'] == buttons[1][column]['text'] == buttons[2][column]['text'] !='':
+            buttons[0][column].config(bg='green')
+            buttons[1][column].config(bg='green')
+            buttons[2][column].config(bg='green')
+            return True
+
+    if buttons[0][0]['text'] == buttons[1][1]['text'] == buttons[2][2]['text'] != '':
+        buttons[0][0].config(bg='green')
+        buttons[1][1].config(bg='green')
+        buttons[2][2].config(bg='green')
+        return True
+
+    elif buttons[0][2]['text'] == buttons[1][1]['text'] == buttons[2][0]['text'] != '':
+        buttons[0][2].config(bg='green')
+        buttons[1][1].config(bg='green')
+        buttons[2][0].config(bg='green')
+        return True
+
+    elif empty_spaace() is False:
+        for row in range(3):
+            for column in range(3):
+                buttons[row][column].config(bg='red')
+
+        return 'Tie'
+
+    else:
+        return False
+
+
+def empty_spaace():
+    spaces = 9
+    # nested loop that decrease soaces -1 on every iteration ind return True until spaces is 0
+    for row in range(3):
+        for column in range(3):
+            if buttons[row][column]['text'] != '':
+                spaces -= 1
+    if spaces == 0:
+        return False
+    else:
+        return True
+
+def new_game():
+    # choice new start player and update label and set all buton text ang color to default
+    global player, X, O
+    player = random.choice(players)
+    label.config(text=player+' turn')
+
+    for row in range(3):
+        for column in range(3):
+            buttons[row][column].config(text='', bg='#F0F0F0')
+
+
+
+def update_scores():
+    # wins counter and this will update counter thansk to calling function in the end of next_turn()
+    x_label_scor.config(text='X win ' + str(X) + '      ')
+    y_label_scor.config(text='        O win '+str(O))
+
+
+window = Tk()
+X = 0
+O = 0
+window.title('Tik Tak Two')
+players = ['x', 'o']
+player = random.choice(players)
+# 2D list for buttons
+buttons = [[None, None, None],
+           [None, None, None],
+           [None, None, None]]
+
+label = Label(window, text=player+' turn', font=('consolas', 40))
+label.pack(side=TOP)
+
+frame = Frame(window)
+frame.pack()
+
+x_label_scor = Label(frame, text='X win ' + str(X) + '      ', font=('consolas', 12))
+x_label_scor.pack(side=LEFT)
+
+reset_burron = Button(frame, text='reset', font=('consolas', 20), command=new_game)
+reset_burron.pack(side=LEFT)
+
+y_label_scor = Label(frame, text='        O win '+str(O), font=('consolas', 12))
+y_label_scor.pack(side=RIGHT)
+
+
+Button_frame = Frame(window)
+Button_frame.pack()
+# initialization of all 9 buttons with nested loop
+for row in range(3):
+    for column in range(3):
+        buttons[row][column] = Button(Button_frame, text='', font=('consolas', 40), width=5, height=2,
+                                      command=lambda row=row, column=column: next_turn(row, column))
+        buttons[row][column].grid(row=row, column= column)
+
+window.mainloop()
