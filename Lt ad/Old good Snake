@@ -1,0 +1,173 @@
+from tkinter import *
+import random
+
+# CONSTANS
+GAME_WIDTH = 700
+GAME_HEIGHT = 700
+SPACE_SIZE = 40
+BODY_PARTS = 3
+SNAKE_COLOR = '#00FF00'
+FOOD_COLOR = '#FF0000'
+BACKGROUND_COLOR = '#000000'
+
+speed = 100
+
+class Snake:
+
+    def __init__(self):
+        self.body_size = BODY_PARTS
+        self.coordinates = []
+        self.squares = []
+
+        for i in range(0, BODY_PARTS):
+            self.coordinates.append([200, 200])
+        #First loop create lenght of body and define where ged of snake start
+        #Second lood create a body for snake in given coordinates x and y are leaft top corner and
+        # x + SPACE_SIZE and y + SPACE_SIZE are botom right corner
+        for x, y in self.coordinates:
+            square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR, tags='snake')
+            self.squares.append(square)
+
+
+class Food:
+
+    def __init__(self):
+        x = random.randint(0, int(GAME_WIDTH / SPACE_SIZE) - 1) * SPACE_SIZE
+        y = random.randint(0, int(GAME_HEIGHT / SPACE_SIZE) - 1) * SPACE_SIZE
+
+        self.coordinates = [x, y]
+        #Create x and y position thanks to randint from random library and create food
+        canvas.create_oval(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=FOOD_COLOR, tags="food")
+
+
+def next_turn(snake, food):
+    # x = leaft x top corner and y = left y top corner next if and 3 elif define to move snake
+    # until user change the direction
+    x, y = snake.coordinates[0]
+    if direction == 'up':
+        y -= SPACE_SIZE
+    elif direction == 'down':
+        y += SPACE_SIZE
+    elif direction == 'left':
+        x -= SPACE_SIZE
+    elif direction == 'right':
+        x += SPACE_SIZE
+    # first we insert x and y on first plays in ist coordinates next we create rectangle like in
+    # snake class and have x, y, x + SPACE_SIZE, y + SPACE_SIZE coordinate and color and finaly
+    # put new rectangle on begin of list and move other to next position and we have snake with
+    # new rectangle which is head of snake
+    snake.coordinates.insert(0, (x, y))
+    square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR)
+    snake.squares.insert(0, square)
+    # if head of snake hit the foood increes scior and speed of snake change scor in whindow
+    # and destroy old and create new food
+    if x == food.coordinates[0] and y == food.coordinates[1]:
+        global score
+        global speed
+        score += 1
+        speed -= 2
+
+        label.config(text="Score:{}".format(score))
+
+        canvas.delete("food")
+        food = Food()
+    # if upper ontition is fals then decreas lenght of sname boody (body size will be increaed in every move)
+    else:
+        del snake.coordinates[-1]
+        canvas.delete(snake.squares[-1])
+        del snake.squares[-1]
+    # if we chis someting the game is over
+    if check_collisions(snake):
+        game_over()
+    # make game continiu until the if check_collisions(snake): is true
+    else:
+        window.after(speed, next_turn, snake, food)
+
+
+def change_direction(new_direction):
+    # everyone if checks if new direction is not opposed to the current one and if its not then is changed
+    global direction
+
+    if new_direction == 'left':
+        if direction != 'right':
+            direction = new_direction
+
+    elif new_direction == 'right':
+        if direction != 'left':
+            direction = new_direction
+
+    elif new_direction == 'up':
+        if direction != 'down':
+            direction = new_direction
+
+    elif new_direction == 'down':
+        if direction != 'up':
+            direction = new_direction
+
+
+def check_collisions(snake):
+    # check if we hit in window frames then return True becous we hit or if we hit in sname bood from
+    # head to his last body part then alsow return True and gema end in both case but if in both we dont
+    # have True then rerutn False becous we didn't hit someting
+
+    x, y = snake.coordinates[0]
+
+    if x < 0 or x >= GAME_WIDTH:
+        return True
+
+    elif y < 0 or y >= GAME_HEIGHT:
+        return True
+
+    for body_part in snake.coordinates[1:]:
+        if x == body_part[0] and y == body_part[1]:
+            return True
+
+    return False
+
+
+def game_over():
+    canvas.delete(ALL)
+    canvas.create_text(canvas.winfo_width() / 2, canvas.winfo_height() / 2, font=('consolas', 70),
+                       text="Game over \n Scor:{}".format(score), fill='red', tags='game over')
+
+
+window = Tk()
+window.title('Snake game')
+window.resizable(False, False)
+
+score = 0
+direction = 'down'
+
+label = Label(window, text="Score:{}".format(score), font=('constans', 40))
+label.pack()
+
+canvas = Canvas(window, bg=BACKGROUND_COLOR, height=GAME_HEIGHT, width=GAME_WIDTH)
+canvas.pack()
+
+window.update()
+
+window_width = window.winfo_width()
+window_height = window.winfo_height()
+screan_width = window.winfo_screenwidth()
+screan_height = window.winfo_screenheight()
+
+x = int((screan_width / 2) - (window_width / 2))
+y = int((screan_height / 2) - (window_height / 2))
+
+window.geometry(f'{window_width}x{window_height}+{x}+{y}')
+
+snake = Snake()
+food = Food()
+next_turn(snake, food)
+
+window.bind('<Left>', lambda event: change_direction('left'))
+window.bind('<Right>', lambda event: change_direction('right'))
+window.bind('<Up>', lambda event: change_direction('up'))
+window.bind('<Down>', lambda event: change_direction('down'))
+
+window.bind('<a>', lambda event: change_direction('left'))
+window.bind('<d>', lambda event: change_direction('right'))
+window.bind('<w>', lambda event: change_direction('up'))
+window.bind('<s>', lambda event: change_direction('down'))
+
+window.mainloop()
