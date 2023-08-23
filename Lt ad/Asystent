@@ -1,0 +1,68 @@
+import time
+import speech_recognition as sr
+import pyttsx3 as tts
+import webbrowser
+import subprocess
+#############
+
+r = sr.Recognizer()
+engine = tts.init()
+engine.setProperty('rate', 125)
+
+def mowa(text):
+    engine.say(text)
+    engine.runAndWait()
+
+
+def sluchanie():
+    with sr.Microphone() as source:
+        try:
+            print('Slucham...')
+            mowa('Slucham')
+            audio = r.listen(source, timeout=15, phrase_time_limit=3)
+            text = r.recognize_google(audio, language='pl-PL')
+
+            if text != '':
+                return text
+            return 'Nie rozumiem powturz'
+        except:
+            return 0
+#############
+
+def wylacz_sie():
+    mowa('Gdybyś mnie potrzebował zawsze jestem pod ręką')
+    quit()
+    exit()
+
+def przegladarka():
+    webbrowser.open('google.com')
+
+def spotify():
+    path = 'C:\\Users\\USER\\Desktop\\Spotify.lnk '
+    subprocess.Popen(['explorer', path], shell=True)
+
+
+def WYWOLANIA():
+
+    WYLACZ_SIE_KOMENDY=['Wyłacz sie','wyłacz sie', 'Koniec pracy','koniec pracy', 'Starczy na dzisiaj','starczy na dzisiaj']
+    for zdanie in WYLACZ_SIE_KOMENDY:
+        if zdanie == text:
+            wylacz_sie()
+
+    PRZEGLADARKA=['Chrome','chrome', 'Przeglądarka','przeglądarka', 'Internet','internet']
+    for zdanie in PRZEGLADARKA:
+        if zdanie == text:
+            mowa('Wlaczam przegladarke')
+            przegladarka()
+
+    SPOTIFY=['Spotify','spotify', 'Muzyka','muzyka', 'Zagrasz mi coś','zagrasz mi coś']
+    for zdanie in SPOTIFY:
+        if zdanie == text:
+            mowa('Wlaczam spotify')
+            spotify()
+
+
+while True:
+    time.sleep(1.0)
+    text = sluchanie()
+    WYWOLANIA()
