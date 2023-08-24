@@ -1,1 +1,66 @@
-gfhfghfgh
+import pandas as pd
+import numpy as np
+import sklearn
+from sklearn import linear_model
+from sklearn.utils import shuffle
+import matplotlib.pyplot as pyplot
+import pickle
+from matplotlib import style
+
+# import data from student-mat.csv with ';' as separator and extract needed data
+# "G1", "G2", "G3", "studytime", "failures", "absences" and pedict as somting to predict
+data = pd.read_csv("student-mat.csv", sep=';')
+data = data[["G1", "G2", "G3", "studytime", "failures", "absences"]]
+predict = "G3"
+
+# X is array without predict = "G3" and y is array with only predict = "G3"
+X = np.array(data.drop([predict], axis=1))# atribiuts
+y = np.array(data[predict])# label
+x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, test_size=0.1)
+#line abow create x_train = X , y_train = y and x_test and y_test test data
+
+
+# we train model and save(with pickle ) the best version of it and load version that we save
+# if we run that one time we can delite code between ###### becous we load it from "studentmodel.pickle"
+######
+best = 0
+for _ in range(500):
+    x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, test_size=0.1)
+
+    #create  fit line
+    linear = linear_model.LinearRegression()
+    # fit data to create best fil line
+    linear.fit(x_train, y_train)
+    # it give accurity
+    acc = linear.score(x_test, y_test)
+    print(acc)
+
+    if acc > best:
+        best = acc
+        # create
+        with open("studentmodel.pickle", "wb") as f:
+            pickle.dump(linear, f)
+######
+
+pickle_in = open("studentmodel.pickle", "rb")
+linear = pickle.load(pickle_in)
+
+print("Coefficient \n", linear.coef_)
+print("Intercept \n", linear.intercept_)
+
+# predicion to each student
+predictions = linear.predict(x_test)
+
+# print prediction, data that data from which we predicted result, true value
+for x in range(len(predictions)):
+    print(predictions[x], x_test[x], y_test[x])
+
+# Create scater to see correlations between 'G3' and some atribiut
+
+style.use('ggplot')
+p = 'studytime'
+
+pyplot.scatter(data[p], data['G3'])
+pyplot.xlabel(p)
+pyplot.ylabel('Final Grade(G3)')
+pyplot.show()
