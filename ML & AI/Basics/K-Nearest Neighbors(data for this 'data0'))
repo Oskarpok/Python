@@ -1,0 +1,56 @@
+import sklearn
+from sklearn.utils import shuffle
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import linear_model, preprocessing
+import pandas as pd
+
+
+# import data from car.data and print first 5
+data = pd.read_csv('car.data')
+print(data.head())
+
+# its take label from data end encoder them to proper vales
+le = preprocessing.LabelEncoder()
+# create arrays from proper column and fit label encoder
+buying = le.fit_transform(list(data['buying']))
+maint = le.fit_transform(list(data['maint']))
+door = le.fit_transform(list(data['door']))
+persons = le.fit_transform(list(data['persons']))
+lug_boot = le.fit_transform(list(data['lug_boot']))
+safety = le.fit_transform(list(data['safety']))
+cls = le.fit_transform(list(data['class']))
+
+#data dat we will predict
+predict = 'class'
+
+# create 2 list X take all atribiuts and pack tem to one list with zip ,y list of cls
+X = list(zip(buying, maint, door, persons, lug_boot, safety))
+y = list(cls)
+
+x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(X, y, test_size=0.1)
+# split data to training data and the test data
+
+#model of the k-nearest neighbors classifier with the parameter n_neighbors=9
+model = KNeighborsClassifier(n_neighbors=9)
+
+model.fit(x_train, y_train)
+acc = model.score(x_test, y_test)
+# train moodle on test data
+# model accuracy calculation
+
+print(acc)
+
+predicted = model.predict(x_test)
+# print prediction, data that data from which we predicted result, true value
+
+name = ['unnacc', 'acc', 'good', 'vgood']
+# list that we will substitute string for values to better grades
+
+
+# loop print prediction data and true value and information about 9 close neighbors
+# can coment  print("N:", n)  for first better look
+
+for x in range(len(predicted)):
+    n = model.kneighbors([x_test[x]], 9, True)
+    print("Predicted:", name[predicted[x]], "  Data:", x_test[x], "  Actual:", name[y_test[x]])
+    print("N:", n)
