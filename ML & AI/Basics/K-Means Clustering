@@ -1,0 +1,43 @@
+import numpy as np
+import sklearn
+from sklearn.preprocessing import scale
+from sklearn.datasets import load_digits
+from sklearn.cluster import KMeans
+from sklearn import metrics
+
+# load data to project and scale data to faster result
+digits = load_digits()
+data = scale(digits.data)
+
+# data labels
+y = digits.target
+# return digits number
+k = len(np.unique(y))
+
+#number of samples, number of features
+samples, features = data.shape
+
+
+# this function score clustering quality
+def bench_k_means(estimator, name, data):
+    # we fit estimator do data
+    estimator.fit(data)
+
+    print('%-9s\t%i\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f'
+          % (name, estimator.inertia_,
+             metrics.homogeneity_score(y, estimator.labels_),
+             metrics.completeness_score(y, estimator.labels_),
+             metrics.v_measure_score(y, estimator.labels_),
+             metrics.adjusted_rand_score(y, estimator.labels_),
+             metrics.adjusted_mutual_info_score(y,  estimator.labels_),
+             metrics.silhouette_score(data, estimator.labels_,
+                                      metric='euclidean')))
+             # each metrics.* measures different clustering quality metrics more in documentation
+             # https://scikit-learn.org/stable/modules/model_evaluation.html
+
+# we initiate estimator (model) K-means with k clusters(algorithm will figure out how many there are)
+# centroid positions appear randomly and we set centroid 11 times
+clf = KMeans(n_clusters=k, init='random', n_init=11)
+
+# we invoke function with estimator we create before we name estimator as 1 and give data
+#bench_k_means(clf, '1', data)
