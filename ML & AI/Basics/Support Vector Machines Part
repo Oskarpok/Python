@@ -7,8 +7,8 @@ from sklearn.neighbors import KNeighborsClassifier
 # load data from python
 cancer = datasets.load_breast_cancer()
 
-# print(cancer.feature_names)
-# print(cancer.target_names)
+print(cancer.feature_names) # print atribiuts
+print(cancer.target_names) # print label
 
 x = cancer.data # atribiuts
 y = cancer.target # label
@@ -16,13 +16,13 @@ y = cancer.target # label
 # data division into training and test
 x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size=0.2)
 
-
+# create linear SVM and with C =2 and training those data
 classes = ['malignant', 'benign']
 
-#clf = svm.SVC(kernel="linear", C=2)
+clf = svm.SVC(kernel="linear", C=2)
 
 # create KNN with n_neighbors=9 what will take 9 most close data and training those data
-clf = KNeighborsClassifier(n_neighbors=9)
+# clf = KNeighborsClassifier(n_neighbors=9)
 
 # data to train
 clf.fit(x_train, y_train)
@@ -33,6 +33,7 @@ y_pred = clf.predict(x_test)
 acc = metrics.accuracy_score(y_test, y_pred)
 print(acc)
 
+# Converting numeric labels to their corresponding names
 y_test_names = [classes[label] for label in y_test]
 y_pred_names = [classes[label] for label in y_pred]
 
